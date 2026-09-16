@@ -7,9 +7,15 @@
 //    the model's reply is constrained to match this exact shape instead
 //    of writing free-form prose we'd have to guess how to parse.
 
+export type EvidenceAlignment =
+  | "supported_by_documents"
+  | "contradicted_by_documents"
+  | "not_addressed_by_documents";
+
 export interface Hypothesis {
   title: string;
   explanation: string;
+  evidence_alignment: EvidenceAlignment;
   potential_evidence: string;
   recommended_next_step: string;
 }
@@ -37,16 +43,28 @@ export const analysisJsonSchema = {
         properties: {
           title: { type: "string", description: "Short name for this hypothesis." },
           explanation: { type: "string", description: "Why this could be happening." },
+          evidence_alignment: {
+            type: "string",
+            enum: ["supported_by_documents", "contradicted_by_documents", "not_addressed_by_documents"],
+            description:
+              "Whether the provided document excerpts support, contradict, or say nothing about this hypothesis. Use 'not_addressed_by_documents' when no documents were provided at all.",
+          },
           potential_evidence: {
             type: "string",
-            description: "What data or evidence would confirm or rule this out.",
+            description: "What additional data or evidence would confirm or rule this out.",
           },
           recommended_next_step: {
             type: "string",
             description: "The single most useful next analytical step for this hypothesis.",
           },
         },
-        required: ["title", "explanation", "potential_evidence", "recommended_next_step"],
+        required: [
+          "title",
+          "explanation",
+          "evidence_alignment",
+          "potential_evidence",
+          "recommended_next_step",
+        ],
         additionalProperties: false,
       },
     },

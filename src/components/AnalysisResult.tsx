@@ -1,4 +1,18 @@
-import type { ConsultingAnalysis } from "@/lib/analysisSchema";
+import type { ConsultingAnalysis, EvidenceAlignment } from "@/lib/analysisSchema";
+
+const EVIDENCE_BADGE_STYLES: Record<EvidenceAlignment, string> = {
+  supported_by_documents:
+    "bg-green-100 text-green-800 dark:bg-green-900/60 dark:text-green-300",
+  contradicted_by_documents: "bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300",
+  not_addressed_by_documents:
+    "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400",
+};
+
+const EVIDENCE_BADGE_LABELS: Record<EvidenceAlignment, string> = {
+  supported_by_documents: "Supported by documents",
+  contradicted_by_documents: "Contradicted by documents",
+  not_addressed_by_documents: "Not addressed by documents",
+};
 
 export function AnalysisResult({ analysis }: { analysis: ConsultingAnalysis }) {
   return (
@@ -14,9 +28,16 @@ export function AnalysisResult({ analysis }: { analysis: ConsultingAnalysis }) {
               key={index}
               className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4"
             >
-              <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">
-                {index + 1}. {hypothesis.title}
-              </h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">
+                  {index + 1}. {hypothesis.title}
+                </h3>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${EVIDENCE_BADGE_STYLES[hypothesis.evidence_alignment]}`}
+                >
+                  {EVIDENCE_BADGE_LABELS[hypothesis.evidence_alignment]}
+                </span>
+              </div>
               <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-300">
                 {hypothesis.explanation}
               </p>

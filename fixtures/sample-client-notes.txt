@@ -1,0 +1,15 @@
+Client: NorthPeak Outdoor Gear (fictional demo company)
+Internal notes from account team, Q3 review
+
+Retention update: Logo retention dropped from 92% to 84% over the last two quarters.
+The decline is concentrated almost entirely in customers acquired through the paid
+social media channel in the last 6 months — retention for customers from organic
+search and referral channels has stayed flat at 93%.
+
+Support team flagged a 40% increase in tickets mentioning "shipping delays" starting
+in June, coinciding with the switch to a new fulfillment warehouse partner.
+
+No pricing changes have been made in the last 12 months.
+
+Customer success has not yet run an exit survey for churned accounts this quarter,
+so we do not have direct reasons from customers who left.
