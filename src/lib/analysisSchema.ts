@@ -12,12 +12,22 @@ export type EvidenceAlignment =
   | "contradicted_by_documents"
   | "not_addressed_by_documents";
 
+// What Claude claims a quote's provenance is. We deliberately do NOT ask
+// it for a page number here — we compute that ourselves during citation
+// verification, from our own trusted chunk records, rather than trusting
+// the model to correctly recall and report that metadata.
+export interface Citation {
+  source_file: string;
+  quote: string;
+}
+
 export interface Hypothesis {
   title: string;
   explanation: string;
   evidence_alignment: EvidenceAlignment;
   potential_evidence: string;
   recommended_next_step: string;
+  citations: Citation[];
 }
 
 export interface ConsultingAnalysis {
@@ -57,6 +67,26 @@ export const analysisJsonSchema = {
             type: "string",
             description: "The single most useful next analytical step for this hypothesis.",
           },
+          citations: {
+            type: "array",
+            description:
+              "1-2 short quotes (each under 200 characters) copied EXACTLY, character-for-character, from the provided document excerpts that support or contradict this hypothesis. Do not paraphrase or summarize — copy verbatim. Leave this empty if evidence_alignment is 'not_addressed_by_documents' or no documents were provided.",
+            items: {
+              type: "object",
+              properties: {
+                source_file: {
+                  type: "string",
+                  description: "The exact source filename this quote was copied from, as shown in the excerpt label.",
+                },
+                quote: {
+                  type: "string",
+                  description: "An exact, verbatim quote copied character-for-character from the excerpt text.",
+                },
+              },
+              required: ["source_file", "quote"],
+              additionalProperties: false,
+            },
+          },
         },
         required: [
           "title",
@@ -64,6 +94,7 @@ export const analysisJsonSchema = {
           "evidence_alignment",
           "potential_evidence",
           "recommended_next_step",
+          "citations",
         ],
         additionalProperties: false,
       },

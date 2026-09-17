@@ -1,9 +1,10 @@
 import { generateAnalysis } from "@/lib/llm";
-import { extractTextFromFile } from "@/lib/documents";
+import { extractPagesFromFile } from "@/lib/documents";
 import { chunkText, selectChunksWithinBudget, type DocumentChunk } from "@/lib/chunking";
 import { embedDocumentChunks, embedQuery } from "@/lib/embeddings";
 import { rankByRelevance } from "@/lib/vectorSearch";
-import type { AnalyzeResponse, RetrievedChunkInfo } from "@/lib/apiTypes";
+import { verifyCitations } from "@/lib/citations";
+import type { AnalyzeResponse, RetrievedChunkInfo, VerifiedHypothesis } from "@/lib/apiTypes";
 
 // A simple safety cap for this prototype — real validation (virus
 // scanning, per-file-type limits, etc.) would come before production use.
@@ -44,8 +45,10 @@ export async function POST(request: Request) {
   let allChunks: DocumentChunk[] = [];
   try {
     for (const file of files) {
-      const text = await extractTextFromFile(file);
-      allChunks = allChunks.concat(chunkText(text, file.name));
+      const pages = await extractPagesFromFile(file);
+      for (const page of pages) {
+        allChunks = allChunks.concat(chunkText(page.text, file.name, page.pageNumber));
+      }
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Could not read one of the uploaded files.";
@@ -73,7 +76,12 @@ export async function POST(request: Request) {
       evidenceChunks = selected;
       retrievedChunks = ranked
         .filter((r) => selected.includes(r.item))
-        .map((r) => ({ sourceName: r.item.sourceName, index: r.item.index, score: r.score }));
+        .map((r) => ({
+          sourceName: r.item.sourceName,
+          pageNumber: r.item.pageNumber,
+          index: r.item.index,
+          score: r.score,
+        }));
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not process document embeddings.";
       return Response.json({ error: message }, { status: 500 });
@@ -85,9 +93,20 @@ export async function POST(request: Request) {
       totalChunksAvailable: allChunks.length,
     });
 
+    // Don't trust Claude's citations at face value — check each claimed
+    // quote against the real chunk text we actually sent, and only keep
+    // (and enrich with a real page number) the ones that verifiably exist.
+    let citationsDropped = 0;
+    const verifiedHypotheses: VerifiedHypothesis[] = analysis.hypotheses.map((hypothesis) => {
+      const { verified, droppedCount } = verifyCitations(hypothesis.citations, evidenceChunks);
+      citationsDropped += droppedCount;
+      return { ...hypothesis, citations: verified };
+    });
+
     const responseBody: AnalyzeResponse = {
-      analysis,
+      analysis: { ...analysis, hypotheses: verifiedHypotheses },
       retrieval: { totalChunks: allChunks.length, retrievedChunks },
+      citationsDropped,
     };
     return Response.json(responseBody);
   } catch (error) {

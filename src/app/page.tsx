@@ -1,8 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { ConsultingAnalysis } from "@/lib/analysisSchema";
-import type { AnalyzeResponse } from "@/lib/apiTypes";
+import type { AnalyzeResponse, VerifiedAnalysis } from "@/lib/apiTypes";
 import { AnalysisResult } from "@/components/AnalysisResult";
 
 // "use client" marks this as code that runs in the browser (so it can use
@@ -15,8 +14,9 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<ConsultingAnalysis | null>(null);
+  const [result, setResult] = useState<VerifiedAnalysis | null>(null);
   const [retrieval, setRetrieval] = useState<AnalyzeResponse["retrieval"] | null>(null);
+  const [citationsDropped, setCitationsDropped] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleFilesSelected(selected: FileList | null) {
@@ -58,6 +58,7 @@ export default function Home() {
       const success = data as AnalyzeResponse;
       setResult(success.analysis);
       setRetrieval(success.retrieval);
+      setCitationsDropped(success.citationsDropped);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -142,7 +143,9 @@ export default function Home() {
           </div>
         )}
 
-        {result && <AnalysisResult analysis={result} retrieval={retrieval} />}
+        {result && (
+          <AnalysisResult analysis={result} retrieval={retrieval} citationsDropped={citationsDropped} />
+        )}
       </main>
     </div>
   );

@@ -1,5 +1,5 @@
-import type { ConsultingAnalysis, EvidenceAlignment } from "@/lib/analysisSchema";
-import type { AnalyzeResponse } from "@/lib/apiTypes";
+import type { EvidenceAlignment } from "@/lib/analysisSchema";
+import type { AnalyzeResponse, VerifiedAnalysis } from "@/lib/apiTypes";
 
 const EVIDENCE_BADGE_STYLES: Record<EvidenceAlignment, string> = {
   supported_by_documents:
@@ -15,12 +15,18 @@ const EVIDENCE_BADGE_LABELS: Record<EvidenceAlignment, string> = {
   not_addressed_by_documents: "Not addressed by documents",
 };
 
+function locationLabel(sourceName: string, pageNumber: number | null): string {
+  return pageNumber !== null ? `${sourceName}, page ${pageNumber}` : sourceName;
+}
+
 export function AnalysisResult({
   analysis,
   retrieval,
+  citationsDropped,
 }: {
-  analysis: ConsultingAnalysis;
+  analysis: VerifiedAnalysis;
   retrieval: AnalyzeResponse["retrieval"] | null;
+  citationsDropped: number;
 }) {
   return (
     <div className="flex flex-col gap-8">
@@ -54,6 +60,21 @@ export function AnalysisResult({
                 </span>{" "}
                 {hypothesis.potential_evidence}
               </p>
+              {hypothesis.citations.length > 0 && (
+                <div className="mt-3 flex flex-col gap-2">
+                  {hypothesis.citations.map((citation, citationIndex) => (
+                    <blockquote
+                      key={citationIndex}
+                      className="border-l-2 border-zinc-300 dark:border-zinc-700 pl-3 text-sm italic text-zinc-600 dark:text-zinc-400"
+                    >
+                      &ldquo;{citation.quote}&rdquo;
+                      <footer className="mt-0.5 not-italic text-xs text-zinc-400 dark:text-zinc-500">
+                        — {locationLabel(citation.source_file, citation.pageNumber)}
+                      </footer>
+                    </blockquote>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -84,6 +105,8 @@ export function AnalysisResult({
             {retrieval.totalChunks > retrieval.retrievedChunks.length
               ? `Showing the ${retrieval.retrievedChunks.length} most relevant excerpt(s) out of ${retrieval.totalChunks} total, selected by semantic similarity to your question.`
               : `All ${retrieval.totalChunks} excerpt(s) from your uploaded documents were used.`}
+            {citationsDropped > 0 &&
+              ` ${citationsDropped} citation(s) proposed by the model could not be verified against the source excerpts and were omitted.`}
           </p>
           <ul className="flex flex-col gap-1">
             {retrieval.retrievedChunks.map((chunk, index) => (
@@ -92,7 +115,7 @@ export function AnalysisResult({
                 className="flex items-center justify-between rounded-md bg-zinc-100 dark:bg-zinc-900 px-3 py-1.5 text-sm text-zinc-700 dark:text-zinc-300"
               >
                 <span>
-                  {chunk.sourceName} — excerpt {chunk.index + 1}
+                  {locationLabel(chunk.sourceName, chunk.pageNumber)} — excerpt {chunk.index + 1}
                 </span>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400">
                   similarity {chunk.score.toFixed(2)}

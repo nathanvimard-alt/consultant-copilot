@@ -57,7 +57,10 @@ function buildUserMessage(
   }
 
   const evidenceBlock = chunks
-    .map((chunk) => `[Source: ${chunk.sourceName}, excerpt ${chunk.index + 1}]\n${chunk.text}`)
+    .map((chunk) => {
+      const pageLabel = chunk.pageNumber !== null ? `, page ${chunk.pageNumber}` : "";
+      return `[Source: ${chunk.sourceName}${pageLabel}, excerpt ${chunk.index + 1}]\n${chunk.text}`;
+    })
     .join("\n\n---\n\n");
 
   const retrievalNote =
@@ -72,7 +75,7 @@ const SYSTEM_PROMPT = `You are an AI research assistant supporting a management 
 
 You may or may not be given excerpts from real client documents alongside the business question:
 
-- If document excerpts ARE provided: treat them as the only ground-truth evidence available. For each hypothesis, set "evidence_alignment" to "supported_by_documents" if the excerpts support it, "contradicted_by_documents" if they contradict it, or "not_addressed_by_documents" if the excerpts are silent on it. Reference specific excerpts in your explanation when relevant. Do not treat your own general knowledge as evidence — only the excerpts count as evidence.
+- If document excerpts ARE provided: treat them as the only ground-truth evidence available. For each hypothesis, set "evidence_alignment" to "supported_by_documents" if the excerpts support it, "contradicted_by_documents" if they contradict it, or "not_addressed_by_documents" if the excerpts are silent on it. Reference specific excerpts in your explanation when relevant. Do not treat your own general knowledge as evidence — only the excerpts count as evidence. When evidence_alignment is not "not_addressed_by_documents", include 1-2 short citations quoting the exact, verbatim text (character-for-character, no paraphrasing) that backs your claim, with the correct source_file.
 - If NO document excerpts are provided: set every hypothesis's "evidence_alignment" to "not_addressed_by_documents", and make clear in the executive summary that this analysis is based on general business reasoning only, not client-specific evidence.
 
 Given a business question, you must:

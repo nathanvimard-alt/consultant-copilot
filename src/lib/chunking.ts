@@ -1,5 +1,6 @@
 export interface DocumentChunk {
   sourceName: string;
+  pageNumber: number | null;
   index: number;
   text: string;
 }
@@ -7,14 +8,15 @@ export interface DocumentChunk {
 const DEFAULT_CHUNK_SIZE = 1000; // characters
 const DEFAULT_CHUNK_OVERLAP = 150; // characters
 
-// Splits one document's text into overlapping windows. We overlap chunks
-// so an idea that straddles a chunk boundary isn't cut in half and lost.
-// Nothing here is ML — it's plain string slicing. This step matters
-// because later (once we add real retrieval) we fetch individual chunks,
-// not whole documents, so how we cut them affects what gets found.
+// Splits one page's text into overlapping windows. We overlap chunks so
+// an idea that straddles a chunk boundary isn't cut in half and lost.
+// Nothing here is ML — it's plain string slicing. Chunking happens one
+// page at a time (never across a page boundary) so every chunk can be
+// traced back to a single page for citations.
 export function chunkText(
   text: string,
   sourceName: string,
+  pageNumber: number | null,
   chunkSize = DEFAULT_CHUNK_SIZE,
   overlap = DEFAULT_CHUNK_OVERLAP
 ): DocumentChunk[] {
@@ -27,7 +29,7 @@ export function chunkText(
 
   while (start < normalized.length) {
     const end = Math.min(start + chunkSize, normalized.length);
-    chunks.push({ sourceName, index, text: normalized.slice(start, end) });
+    chunks.push({ sourceName, pageNumber, index, text: normalized.slice(start, end) });
     index += 1;
     if (end === normalized.length) break;
     start = end - overlap;
