@@ -12,7 +12,7 @@ const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5";
 export async function generateAnalysis(
   question: string,
   evidenceChunks: DocumentChunk[],
-  evidenceTruncated: boolean
+  retrieval: { totalChunksAvailable: number }
 ): Promise<ConsultingAnalysis> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
@@ -27,7 +27,7 @@ export async function generateAnalysis(
     model: MODEL,
     max_tokens: 3000,
     system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: buildUserMessage(question, evidenceChunks, evidenceTruncated) }],
+    messages: [{ role: "user", content: buildUserMessage(question, evidenceChunks, retrieval) }],
     // output_config.format forces Claude's reply to be JSON matching this
     // exact schema, instead of free-form text we'd have to parse by hand.
     output_config: {
@@ -43,13 +43,14 @@ export async function generateAnalysis(
   return JSON.parse(textBlock.text) as ConsultingAnalysis;
 }
 
-// Today there's no retrieval step: every chunk we were handed just gets
-// pasted in as "evidence," labeled by source file. This is the simplest
-// thing that works while documents are small demo files.
+// The chunks we're handed here are already the result of a real retrieval
+// step (embeddings + cosine-similarity ranking in the route handler) —
+// the most relevant excerpts to this specific question, not just "the
+// first N characters we found."
 function buildUserMessage(
   question: string,
   chunks: DocumentChunk[],
-  truncated: boolean
+  retrieval: { totalChunksAvailable: number }
 ): string {
   if (chunks.length === 0) {
     return `Business question: ${question}\n\nNo client documents were provided for this question.`;
@@ -59,11 +60,12 @@ function buildUserMessage(
     .map((chunk) => `[Source: ${chunk.sourceName}, excerpt ${chunk.index + 1}]\n${chunk.text}`)
     .join("\n\n---\n\n");
 
-  const truncationNote = truncated
-    ? "\n\n(Note: the uploaded documents were larger than this prototype's evidence budget, so only an initial portion is included above.)"
-    : "";
+  const retrievalNote =
+    retrieval.totalChunksAvailable > chunks.length
+      ? `\n\n(These are the ${chunks.length} excerpts judged most relevant to the question, selected via semantic similarity search out of ${retrieval.totalChunksAvailable} total excerpts across the uploaded documents. Other, less relevant excerpts exist but were not included.)`
+      : "";
 
-  return `Business question: ${question}\n\nDocument excerpts provided as evidence:\n\n${evidenceBlock}${truncationNote}`;
+  return `Business question: ${question}\n\nDocument excerpts provided as evidence:\n\n${evidenceBlock}${retrievalNote}`;
 }
 
 const SYSTEM_PROMPT = `You are an AI research assistant supporting a management consultant during business problem diagnosis.

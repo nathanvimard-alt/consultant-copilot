@@ -1,0 +1,74 @@
+Client: NorthPeak Outdoor Gear (fictional demo company)
+Internal notes from account team, Q3 review — full notes across departments
+
+SECTION 1: CUSTOMER RETENTION
+Logo retention dropped from 92% to 84% over the last two quarters. The decline
+is concentrated almost entirely in customers acquired through the paid social
+media channel in the last 6 months — retention for customers from organic
+search and referral channels has stayed flat at 93%. Support team flagged a
+40% increase in tickets mentioning "shipping delays" starting in June,
+coinciding with the switch to a new fulfillment warehouse partner. No pricing
+changes have been made in the last 12 months. Customer success has not yet
+run an exit survey for churned accounts this quarter, so we do not have
+direct reasons from customers who left. Account managers report anecdotally
+that several long-time wholesale partners have also mentioned slower restock
+times since the warehouse transition, though none have formally churned.
+The customer success team's working theory is that new customers, who have
+not yet built loyalty or trust with the brand, are far less tolerant of a
+single bad delivery experience than repeat customers who have a track record
+of reliable service to fall back on when judging whether one bad experience
+is an anomaly or a pattern.
+
+SECTION 2: IT SYSTEMS MIGRATION
+The company completed a migration from an on-premise email server to a
+cloud-hosted provider in May. IT reported minimal downtime (under two hours)
+during the cutover weekend. A handful of employees needed help resetting
+two-factor authentication afterward, but no data loss was reported. The next
+planned IT project is upgrading the point-of-sale terminals in the three
+physical retail locations, tentatively scheduled for next spring. IT has also
+proposed consolidating three separate internal ticketing tools (used by
+support, facilities, and engineering respectively) into a single shared
+platform, which would simplify reporting but requires budget approval and a
+multi-week data migration effort that has not yet been scheduled.
+
+SECTION 3: OFFICE LEASE RENEWAL
+The lease on the downtown warehouse office space expires in fourteen months.
+Facilities has requested quotes from three commercial real estate brokers to
+evaluate whether to renew in place, downsize given more staff working
+remotely, or relocate closer to the new fulfillment partner's distribution
+hub. No decision is expected before the next fiscal year planning cycle.
+Preliminary broker feedback suggests downsizing could save roughly 15-20% on
+annual lease costs given current commercial vacancy rates in the area, but
+would require reconfiguring the current open-plan layout to fit a smaller
+footprint, which facilities estimates would cost around two months of rent
+savings to execute.
+
+SECTION 4: MARKETING CAMPAIGN BUDGET
+The Q3 marketing budget was split roughly 55% paid social, 25% search ads,
+and 20% affiliate/referral partnerships. Leadership approved a 10% budget
+increase for Q4 to support the holiday season, with the increase allocated
+primarily to paid social given its historically strong new-customer volume,
+though a decision on channel mix for the increase is still pending review.
+The marketing team also ran a limited test of influencer partnerships in
+August, which drove a modest bump in site traffic but conversion tracking
+was inconclusive due to a tagging issue that has since been fixed for future
+campaigns.
+
+SECTION 5: EXECUTIVE TRAVEL POLICY
+HR updated the corporate travel policy to require manager pre-approval for
+any single trip exceeding $1,500, down from the previous $2,500 threshold.
+The change was prompted by a routine finance audit recommendation rather
+than any specific incident, and takes effect at the start of next quarter.
+HR also plans to roll out an updated expense reporting tool alongside the
+policy change, replacing the current spreadsheet-based process, with training
+sessions for managers scheduled over the following month.
+
+SECTION 6: WAREHOUSE PARTNER TRANSITION DETAILS
+The switch to the new fulfillment warehouse partner took effect in early
+June. The prior partner's contract was not renewed due to recurring capacity
+constraints during peak periods in the previous holiday season. The new
+partner offered lower per-unit fulfillment costs and additional warehouse
+capacity, but the transition required migrating inventory records and
+integrating a new shipping API, which operations has acknowledged had a
+rougher-than-expected rollout in the first several weeks, including the
+delay issues referenced by customer support.

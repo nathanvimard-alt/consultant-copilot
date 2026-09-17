@@ -1,4 +1,5 @@
 import type { ConsultingAnalysis, EvidenceAlignment } from "@/lib/analysisSchema";
+import type { AnalyzeResponse } from "@/lib/apiTypes";
 
 const EVIDENCE_BADGE_STYLES: Record<EvidenceAlignment, string> = {
   supported_by_documents:
@@ -14,7 +15,13 @@ const EVIDENCE_BADGE_LABELS: Record<EvidenceAlignment, string> = {
   not_addressed_by_documents: "Not addressed by documents",
 };
 
-export function AnalysisResult({ analysis }: { analysis: ConsultingAnalysis }) {
+export function AnalysisResult({
+  analysis,
+  retrieval,
+}: {
+  analysis: ConsultingAnalysis;
+  retrieval: AnalyzeResponse["retrieval"] | null;
+}) {
   return (
     <div className="flex flex-col gap-8">
       <Section title="Executive Diagnosis">
@@ -70,6 +77,31 @@ export function AnalysisResult({ analysis }: { analysis: ConsultingAnalysis }) {
           ))}
         </ul>
       </Section>
+
+      {retrieval && retrieval.retrievedChunks.length > 0 && (
+        <Section title="Evidence Retrieved">
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-2">
+            {retrieval.totalChunks > retrieval.retrievedChunks.length
+              ? `Showing the ${retrieval.retrievedChunks.length} most relevant excerpt(s) out of ${retrieval.totalChunks} total, selected by semantic similarity to your question.`
+              : `All ${retrieval.totalChunks} excerpt(s) from your uploaded documents were used.`}
+          </p>
+          <ul className="flex flex-col gap-1">
+            {retrieval.retrievedChunks.map((chunk, index) => (
+              <li
+                key={index}
+                className="flex items-center justify-between rounded-md bg-zinc-100 dark:bg-zinc-900 px-3 py-1.5 text-sm text-zinc-700 dark:text-zinc-300"
+              >
+                <span>
+                  {chunk.sourceName} — excerpt {chunk.index + 1}
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                  similarity {chunk.score.toFixed(2)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
     </div>
   );
 }
