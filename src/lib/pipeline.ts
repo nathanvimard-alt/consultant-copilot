@@ -60,10 +60,13 @@ export async function analyzeDocuments(question: string, files: File[]): Promise
     // embeddings on every request is wasteful at real scale — a
     // production system would embed once at upload time and store the
     // vectors — but there's no persistence layer in this prototype yet.
-    const [chunkEmbeddings, queryEmbedding] = await Promise.all([
-      embedDocumentChunks(allChunks.map((chunk) => chunk.text)),
-      embedQuery(question),
-    ]);
+    //
+    // Sequential, not Promise.all: firing both Voyage calls at once
+    // spends 2 of a free account's 3-requests-per-minute budget in a
+    // single click, which is what made the rate limit so easy to hit.
+    // One at a time is a little slower but far less likely to trip it.
+    const chunkEmbeddings = await embedDocumentChunks(allChunks.map((chunk) => chunk.text));
+    const queryEmbedding = await embedQuery(question);
 
     const ranked = rankByRelevance(queryEmbedding, allChunks, chunkEmbeddings).slice(0, TOP_K_CHUNKS);
 

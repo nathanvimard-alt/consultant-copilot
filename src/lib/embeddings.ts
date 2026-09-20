@@ -17,11 +17,11 @@ function getClient(): VoyageAIClient {
 // A free Voyage account with no payment method on file is capped at 3
 // requests/minute (discovered by actually hitting it during Day 5's eval
 // run, not guessed at ahead of time) — a single user clicking "Analyze"
-// now and then rarely notices, but a script firing off several requests
-// back-to-back (like eval/run.ts) hits it immediately. Rather than fail
-// outright, wait out the rate-limit window and retry a couple of times.
+// now and then rarely notices, but a couple of requests close together
+// can still trip it. Rather than fail outright, wait out the rate-limit
+// window and retry a few times before giving up.
 const RATE_LIMIT_RETRY_DELAY_MS = 21_000;
-const MAX_RETRIES = 2;
+const MAX_RETRIES = 4;
 
 async function withRateLimitRetry<T>(request: () => Promise<T>): Promise<T> {
   for (let attempt = 0; ; attempt++) {
@@ -29,7 +29,14 @@ async function withRateLimitRetry<T>(request: () => Promise<T>): Promise<T> {
       return await request();
     } catch (error) {
       const isRateLimited = error instanceof VoyageAIError && error.statusCode === 429;
-      if (!isRateLimited || attempt >= MAX_RETRIES) throw error;
+      if (!isRateLimited) throw error;
+      if (attempt >= MAX_RETRIES) {
+        // Don't leak Voyage's raw JSON error body to the end user — it's
+        // meaningless to anyone but us.
+        throw new Error(
+          "The embedding service is temporarily rate-limited. Please wait about a minute and try again."
+        );
+      }
       console.warn(
         `Voyage AI rate limit hit — waiting ${RATE_LIMIT_RETRY_DELAY_MS / 1000}s before retry ${attempt + 1}/${MAX_RETRIES}...`
       );
