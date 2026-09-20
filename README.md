@@ -1,6 +1,6 @@
 # Consultant Copilot
 
-An AI-assisted consulting research tool: give it a business question and (optionally) client documents, and it retrieves the relevant evidence, proposes multiple distinct hypotheses, flags whether each is supported or contradicted by the evidence, cites the exact source, and identifies information gaps — instead of returning a single confident-sounding paragraph.
+An AI-assisted consulting research tool: give it a business question and (optionally) client documents, and it retrieves the relevant evidence, proposes multiple distinct hypotheses, flags whether each is supported or contradicted by the evidence, cites the exact source, and identifies information gaps instead of returning a single confident-sounding paragraph.
 
 Built as a one-week proof of concept, adding one real capability of a production RAG (Retrieval-Augmented Generation) system each day.
 
