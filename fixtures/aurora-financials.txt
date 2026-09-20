@@ -1,0 +1,32 @@
+Aurora Fitness Co. (fictional demo company)
+Excerpt from FY2025 Annual Report — Income Statement and Management Discussion
+
+INCOME STATEMENT (in thousands USD)
+
+                                    FY2024        FY2025
+Revenue                            120,000       138,000
+Cost of Goods Sold                  54,000        72,000
+Gross Profit                        66,000        66,000
+Gross Margin                          55.0%         47.8%
+Operating Expenses                  38,000        41,000
+Operating Income                    28,000        25,000
+Net Income                          21,500        18,900
+
+MANAGEMENT DISCUSSION AND ANALYSIS
+
+Revenue grew 15% year-over-year, driven primarily by expansion into three
+new metropolitan markets and a 9% increase in average membership pricing.
+However, gross margin declined from 55.0% to 47.8% despite the revenue
+growth. Management attributes this primarily to higher equipment
+procurement costs following a supplier contract renegotiation in Q2
+FY2025, and to elevated energy costs at newly opened locations that have
+not yet reached target utilization. Operating expenses grew more slowly
+than revenue (8% vs. 15%), reflecting cost discipline in corporate
+overhead, but this was not enough to offset the gross margin compression,
+resulting in a decline in both operating income and net income
+year-over-year despite higher revenue.
+
+No new equity or debt financing was issued during FY2025. The company's
+new markets are expected to reach target membership utilization by
+mid-FY2026 according to internal projections, though these projections
+have not yet been independently validated.

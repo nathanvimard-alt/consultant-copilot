@@ -67,18 +67,27 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black">
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50/60 via-zinc-50 to-zinc-50 dark:from-indigo-950/20 dark:via-black dark:to-black">
       <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-16">
-        <header>
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-            Consultant Copilot
-          </h1>
-          <p className="mt-1 text-zinc-500 dark:text-zinc-400">
-            AI-assisted business problem analysis
-          </p>
+        <header className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm shadow-indigo-600/30">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="6.5" stroke="currentColor" strokeWidth="1.8" />
+              <path d="M20 20L15.8 15.8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              <path d="M11 8.2V11L12.8 12.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+              Consultant Copilot
+            </h1>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              AI-assisted business problem analysis
+            </p>
+          </div>
         </header>
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 shadow-sm">
           <label htmlFor="question" className="font-medium text-zinc-900 dark:text-zinc-50">
             Business Question
           </label>
@@ -88,7 +97,7 @@ export default function Home() {
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="Why might customer retention be declining?"
             rows={4}
-            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 text-zinc-900 dark:text-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+            className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-3 text-zinc-900 dark:text-zinc-50 transition-shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
 
           <label className="font-medium text-zinc-900 dark:text-zinc-50 mt-2">
@@ -100,14 +109,14 @@ export default function Home() {
             multiple
             accept=".txt,.md,.pdf"
             onChange={(e) => handleFilesSelected(e.target.files)}
-            className="text-sm text-zinc-600 dark:text-zinc-400 file:mr-3 file:rounded-full file:border-0 file:bg-zinc-200 dark:file:bg-zinc-800 file:px-4 file:py-2 file:text-sm file:font-medium file:text-zinc-900 dark:file:text-zinc-50"
+            className="text-sm text-zinc-600 dark:text-zinc-400 file:mr-3 file:rounded-full file:border-0 file:bg-indigo-50 dark:file:bg-indigo-500/10 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 dark:file:text-indigo-300 file:transition-colors hover:file:bg-indigo-100 dark:hover:file:bg-indigo-500/20"
           />
           {files.length > 0 && (
             <ul className="flex flex-col gap-1">
               {files.map((file, index) => (
                 <li
                   key={`${file.name}-${index}`}
-                  className="flex items-center justify-between rounded-md bg-zinc-100 dark:bg-zinc-900 px-3 py-1.5 text-sm text-zinc-700 dark:text-zinc-300"
+                  className="flex items-center justify-between rounded-md bg-zinc-100 dark:bg-zinc-800/60 px-3 py-1.5 text-sm text-zinc-700 dark:text-zinc-300"
                 >
                   <span>{file.name}</span>
                   <button
@@ -125,20 +134,24 @@ export default function Home() {
           <button
             onClick={handleAnalyze}
             disabled={loading || !question.trim()}
-            className="self-start rounded-full bg-zinc-900 dark:bg-zinc-50 px-6 py-2.5 font-medium text-white dark:text-black transition-colors hover:bg-zinc-700 dark:hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-1 flex items-center gap-2 self-start rounded-full bg-indigo-600 px-6 py-2.5 font-medium text-white shadow-sm shadow-indigo-600/30 transition-all hover:bg-indigo-500 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
           >
+            {loading && (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+            )}
             {loading ? "Analyzing..." : "Analyze"}
           </button>
         </section>
 
         {loading && (
-          <p className="text-zinc-500 dark:text-zinc-400">
-            Thinking through hypotheses — this can take a few seconds...
-          </p>
+          <div className="flex items-center gap-3 text-zinc-500 dark:text-zinc-400 animate-fade-in-up">
+            <span className="flex h-2 w-2 animate-pulse rounded-full bg-indigo-500" />
+            <p>Retrieving evidence and thinking through hypotheses — this can take a few seconds...</p>
+          </div>
         )}
 
         {error && (
-          <div className="rounded-lg border border-red-300 bg-red-50 dark:bg-red-950 dark:border-red-800 p-4 text-red-700 dark:text-red-300">
+          <div className="rounded-lg border border-red-300 bg-red-50 dark:bg-red-950 dark:border-red-800 p-4 text-red-700 dark:text-red-300 animate-fade-in-up">
             {error}
           </div>
         )}
